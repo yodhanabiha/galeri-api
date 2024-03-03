@@ -7,6 +7,7 @@ import { User } from "src/user/schemas/user.schema";
 import { AlbumPromise } from "./schemas/album.promise";
 import { Photo } from "src/photo/schemas/photo.schema";
 import { PhotoService } from "src/photo/photo.service";
+import { HelperConfig } from "src/util/helper";
 
 @Injectable()
 export class AlbumService {
@@ -14,7 +15,6 @@ export class AlbumService {
         @InjectModel(Album.name) private model: Model<Album>,
         @InjectModel(Photo.name) private photoModel: Model<Photo>,
         @InjectModel(User.name) private userModel: Model<User>,
-        private readonly photoService: PhotoService,
 
     ) { }
 
@@ -26,6 +26,7 @@ export class AlbumService {
         }
 
         createAlbumDto.userId = new Types.ObjectId(createAlbumDto.userId)
+        createAlbumDto.TanggalDibuat = HelperConfig.onGetDateTimeNow()
         const createdAlbum = new this.model(createAlbumDto);
         return createdAlbum.save();
     }
@@ -43,6 +44,7 @@ export class AlbumService {
             const photos = await this.findThree(album._id)
 
             const albumPromise: AlbumPromise = {
+                _id: album._id,
                 NamaAlbum: album.NamaAlbum,
                 Deskripsi: album.Deskripsi,
                 TanggalDibuat: album.TanggalDibuat,
@@ -69,7 +71,27 @@ export class AlbumService {
 
     async findByUserId(userId: string): Promise<Album[]> {
         const convertedUserId = new Types.ObjectId(userId);
-        return this.model.find({ userId: convertedUserId }).exec();
+        const albums = await this.model.find({ userId: convertedUserId }).exec();
+
+        const albumPromises: AlbumPromise[] = [];
+
+        for (const album of albums) {
+
+            const photos = await this.findThree(album._id)
+
+            const albumPromise: AlbumPromise = {
+                _id: album._id,
+                NamaAlbum: album.NamaAlbum,
+                Deskripsi: album.Deskripsi,
+                TanggalDibuat: album.TanggalDibuat,
+                userId: album.userId,
+                photo: photos
+            };
+
+            albumPromises.push(albumPromise);
+        }
+
+        return albumPromises;
     }
 
 }

@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "http://100.97.75.94:3000", "http://100.89.189.35:3000"]
   });
   const config = new DocumentBuilder()
     .setTitle('Galery API')

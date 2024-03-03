@@ -63,7 +63,7 @@ export class PhotoService {
 
     async findByAlbumId(albumId: string): Promise<Photo[]> {
         const convertedId = new Types.ObjectId(albumId);
-        return this.model.find({ userId: convertedId }).exec();
+        return this.model.find({ albumId: convertedId }).exec();
     }
 
 }

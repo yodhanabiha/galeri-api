@@ -7,7 +7,6 @@ export class CreateAlbumDto {
     NamaAlbum: string;
     @ApiProperty()
     Deskripsi: string;
-    @ApiProperty()
     TanggalDibuat: string;
     @ApiProperty({ type: String})
     userId: Types.ObjectId;
